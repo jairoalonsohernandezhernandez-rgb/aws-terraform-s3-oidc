@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configurar credenciales de AWS mediante OIDC
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v3
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: us-east-2
