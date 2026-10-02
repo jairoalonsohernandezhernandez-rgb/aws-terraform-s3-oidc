@@ -25,15 +25,15 @@ jobs:
 
       - name: Debug OIDC Token
         run: |
-              TOKEN=$(curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-                "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com")
-              echo $TOKEN | python3 -c "
-              import sys, json, base64
-              token = json.load(sys.stdin)['value'].split('.')[1]
-              padding = 4 - len(token) % 4
-              token += '=' * padding
-              print(json.dumps(json.loads(base64.b64decode(token)), indent=2))
-              "
+          TOKEN=$(curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com")
+          echo $TOKEN | python3 -c "
+          import sys, json, base64
+          token = json.load(sys.stdin)['value'].split('.')[1]
+          padding = 4 - len(token) % 4
+          token += '=' * padding
+          print(json.dumps(json.loads(base64.b64decode(token)), indent=2))
+          "
 
       - name: Configurar credenciales de AWS mediante OIDC
         uses: aws-actions/configure-aws-credentials@v4
@@ -53,6 +53,8 @@ jobs:
         run: terraform fmt -check
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -out=tfplan
 
-      
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve tfplan
