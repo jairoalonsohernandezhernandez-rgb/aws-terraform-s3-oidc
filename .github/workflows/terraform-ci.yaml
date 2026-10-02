@@ -32,7 +32,6 @@ jobs:
           token = json.load(sys.stdin)['value'].split('.')[1]
           padding = 4 - len(token) % 4
           token += '=' * padding
-          print(json.dumps(json.loads(base64.b64decode(token)), indent=2))
           "
 
       - name: Configurar credenciales de AWS mediante OIDC
